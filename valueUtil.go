@@ -56,6 +56,11 @@ func EqualValues(value1 interface{}, value2 interface{}) bool {
 				return true
 			}
 		}
+	case map[string]interface{}:
+		valueB, ok := value2.(map[string]interface{})
+		if ok {
+			return EqualStringKeyInterfaceMaps(valueA, valueB)
+		}
 	case []string:
 		valueB := value2.([]string)
 		return EqualStringSlices(valueA, valueB)
@@ -75,7 +80,8 @@ func EqualValues(value1 interface{}, value2 interface{}) bool {
 	case map[string]reflect.Kind:
 		valueB, ok := value2.(map[string]reflect.Kind)
 		if ok {
-			var value1A, value2B map[string]interface{}
+			value1A := map[string]interface{}{}
+			value2B := map[string]interface{}{}
 			for s1, x1 := range valueA {
 				value1A[s1] = interface{}(x1)
 			}
@@ -85,7 +91,7 @@ func EqualValues(value1 interface{}, value2 interface{}) bool {
 			return EqualValues(value1A, value2B)
 		}
 	default:
-		fmt.Printf("ERROR CompareValues: Type:%+v Value:%+v for key is out of current options.\n", reflect.TypeOf(value1), reflect.ValueOf(value1))
+		fmt.Printf("ERROR EqualValues: Type:%+v Value:%+v for key is out of current options.\n", reflect.TypeOf(value1), reflect.ValueOf(value1))
 	}
 	return false
 }
