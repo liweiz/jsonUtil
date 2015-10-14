@@ -10,7 +10,14 @@ var s1 = []string{"a", "b", "c"}
 var s2 = []string{"a"}
 var s3 = []string{"b", "c", "a"}
 var s4 = []string{"a", "d", "c"}
-var s5 = []string{"a", "b", "c"}
+var f1 = []float64{1, 2, 3}
+var f2 = []float64{1}
+var f3 = []float64{2, 3, 1}
+var f4 = []float64{1, 4, 3}
+var b1 = []bool{true, false, true}
+var b2 = []bool{true}
+var b3 = []bool{false, true, true}
+var b4 = []bool{true, true, true}
 var m1 = map[string]interface{}{"string": "a"}
 var m2 = map[string]interface{}{"bool": true}
 var m3 = map[string]interface{}{"float64": float64(45)}
@@ -26,7 +33,7 @@ var m12 = map[string]interface{}{"bool": true, "map": m6}
 var m13 = map[string]reflect.Kind{"bool": reflect.Bool, "map": reflect.Map}
 var m14 = map[string]reflect.Kind{"invalid": reflect.Invalid}
 
-type InOutTestEqualInterfaces struct {
+type InOutEqualInterfaces struct {
 	TestTitle string
 	Ins       []interface{}
 	Out       bool
@@ -34,166 +41,306 @@ type InOutTestEqualInterfaces struct {
 
 func TestEqualInterfaces(t *testing.T) {
 	fmt.Println("\nSTART TestEqualInterfaces")
-	toTest := []InOutTestEqualInterfaces{
-		InOutTestEqualInterfaces{
+	toTest := []InOutEqualInterfaces{
+		InOutEqualInterfaces{
 			"Nil and map",
 			[]interface{}{nil, m9},
 			false,
 		},
-		InOutTestEqualInterfaces{
+		InOutEqualInterfaces{
 			"Same bools",
 			[]interface{}{true, true},
 			true,
 		},
-		InOutTestEqualInterfaces{
+		InOutEqualInterfaces{
 			"Different bools",
 			[]interface{}{true, false},
 			false,
 		},
-		InOutTestEqualInterfaces{
+		InOutEqualInterfaces{
 			"Same float64s",
 			[]interface{}{0.1, 0.1},
 			true,
 		},
-		InOutTestEqualInterfaces{
+		InOutEqualInterfaces{
 			"Different float64s",
 			[]interface{}{0.1, 0.2},
 			false,
 		},
-		InOutTestEqualInterfaces{
+		InOutEqualInterfaces{
 			"Same strings",
 			[]interface{}{"m9", "m9"},
 			true,
 		},
-		InOutTestEqualInterfaces{
+		InOutEqualInterfaces{
 			"Different strings",
 			[]interface{}{"m9", ""},
 			false,
 		},
-		InOutTestEqualInterfaces{
+		InOutEqualInterfaces{
 			"Same interface maps",
 			[]interface{}{m9, m9},
 			true,
 		},
-		InOutTestEqualInterfaces{
+		InOutEqualInterfaces{
 			"Different interface maps",
 			[]interface{}{m9, m1},
 			false,
 		},
-		InOutTestEqualInterfaces{
+		InOutEqualInterfaces{
+			"Same bool slices",
+			[]interface{}{b1, b1},
+			true,
+		},
+		InOutEqualInterfaces{
+			"Different bool slices",
+			[]interface{}{b1, b2},
+			false,
+		},
+		InOutEqualInterfaces{
+			"Same float64 slices",
+			[]interface{}{f1, f1},
+			true,
+		},
+		InOutEqualInterfaces{
+			"Different float64 slices",
+			[]interface{}{f1, f2},
+			false,
+		},
+		InOutEqualInterfaces{
 			"Same string slices",
 			[]interface{}{s1, s1},
 			true,
 		},
-		InOutTestEqualInterfaces{
+		InOutEqualInterfaces{
 			"Different string slices",
 			[]interface{}{s1, s2},
 			false,
 		},
-		InOutTestEqualInterfaces{
+		InOutEqualInterfaces{
 			"Same interface map slices",
 			[]interface{}{[]map[string]interface{}{m1, m3}, []map[string]interface{}{m1, m3}},
 			true,
 		},
-		InOutTestEqualInterfaces{
+		InOutEqualInterfaces{
 			"Different interface map slices",
 			[]interface{}{[]map[string]interface{}{m1, m3}, []map[string]interface{}{m1}},
 			false,
 		},
 
-		InOutTestEqualInterfaces{
+		InOutEqualInterfaces{
 			"Same reflect.Kinds",
 			[]interface{}{reflect.Bool, reflect.Bool},
 			true,
 		},
-		InOutTestEqualInterfaces{
+		InOutEqualInterfaces{
 			"Different reflect.Kinds",
 			[]interface{}{reflect.Bool, reflect.String},
 			false,
 		},
-		InOutTestEqualInterfaces{
+		InOutEqualInterfaces{
 			"Same reflect.Kind maps",
 			[]interface{}{m13, m13},
 			true,
 		},
-		InOutTestEqualInterfaces{
+		InOutEqualInterfaces{
 			"Different reflect.Kind maps",
 			[]interface{}{m13, m14},
 			false,
 		},
-		InOutTestEqualInterfaces{
+		InOutEqualInterfaces{
 			"Same not supported slices",
-			[]interface{}{[]float64{0.8, 0.9}, []float64{0.8, 0.9}},
+			[]interface{}{[]int{8, 9}, []int{8, 9}},
 			false,
 		},
 	}
+	pass := true
 	for _, x := range toTest {
 		if EqualInterfaces(x.Ins[0], x.Ins[1]) != x.Out {
+			pass = false
 			t.Errorf("ERR TestEqualInterfaces: %+v interface{}: %+v AND %+v equal failed. Should be %+v\n", x.TestTitle, x.Ins[0], x.Ins[1], x.Out)
 		} else {
-			fmt.Println("PASS TestEqualInterfaces: ", x.TestTitle, x.Ins[0], x.Ins[1])
+			fmt.Println("OK TestEqualInterfaces: ", x.TestTitle, x.Ins[0], x.Ins[1])
 		}
+	}
+	if pass {
+		fmt.Println("PASS TestEqualInterfaces")
 	}
 }
 
-type InOutTestEqualStringSlices struct {
+type InOutEqualStringKeyInterfaceMapSlices struct {
+	TestTitle string
+	Ins       [][]map[string]interface{}
+	Out       bool
+}
+
+func TestEqualStringKeyInterfaceMapSlices(t *testing.T) {
+	fmt.Println("\nSTART TestEqualStringKeyInterfaceMapSlices")
+	toTest := []InOutEqualStringKeyInterfaceMapSlices{
+		InOutEqualStringKeyInterfaceMapSlices{
+			"Same map slices",
+			[][]map[string]interface{}{[]map[string]interface{}{m1, m10}, []map[string]interface{}{m1, m10}},
+			true,
+		},
+		InOutEqualStringKeyInterfaceMapSlices{
+			"Different map slices with different elements",
+			[][]map[string]interface{}{[]map[string]interface{}{m1, m10}, []map[string]interface{}{m10}},
+			false,
+		},
+		InOutEqualStringKeyInterfaceMapSlices{
+			"Different map slices with same keys but different values",
+			[][]map[string]interface{}{[]map[string]interface{}{m4}, []map[string]interface{}{m9}},
+			false,
+		},
+		InOutEqualStringKeyInterfaceMapSlices{
+			"Different map slices with one empty",
+			[][]map[string]interface{}{[]map[string]interface{}{}, []map[string]interface{}{m10}},
+			false,
+		},
+	}
+	pass := true
+	for _, x := range toTest {
+		if EqualStringKeyInterfaceMapSlices(x.Ins[0], x.Ins[1]) != x.Out {
+			pass = false
+			t.Errorf("ERR TestEqualStringKeyInterfaceMapSlices: %+v Slices: %+v AND %+v equal failed. Should be %+v\n", x.TestTitle, x.Ins[0], x.Ins[1], x.Out)
+		} else {
+			fmt.Println("OK TestEqualStringKeyInterfaceMapSlices: ", x.TestTitle, x.Ins[0], x.Ins[1])
+		}
+	}
+	if pass {
+		fmt.Println("PASS TestEqualStringKeyInterfaceMapSlices")
+	}
+}
+
+type InOutEqualBoolSlices struct {
+	TestTitle string
+	Ins       [][]bool
+	Out       bool
+}
+
+func TestEqualBoolSlices(t *testing.T) {
+	fmt.Println("\nSTART TestEqualBoolSlices")
+	toTest := []InOutEqualBoolSlices{
+		InOutEqualBoolSlices{
+			"Different slices with different numbers of elements",
+			[][]bool{b1, b2},
+			false,
+		},
+		InOutEqualBoolSlices{
+			"Different slices with different orders of elements",
+			[][]bool{b1, b3},
+			false,
+		},
+		InOutEqualBoolSlices{
+			"Different slices with different elements",
+			[][]bool{b1, b4},
+			false,
+		},
+		InOutEqualBoolSlices{
+			"Same slices",
+			[][]bool{b1, b1},
+			true,
+		},
+	}
+	pass := true
+	for _, x := range toTest {
+		if EqualBoolSlices(x.Ins[0], x.Ins[1]) != x.Out {
+			pass = false
+			t.Errorf("ERR TestEqualBoolSlices: %+v: Slices: %+v AND %+v equal failed. Should be %+v\n", x.TestTitle, x.Ins[0], x.Ins[1], x.Out)
+		} else {
+			fmt.Println("OK TestEqualBoolSlices: ", x.TestTitle, x.Ins[0], x.Ins[1])
+		}
+	}
+	if pass {
+		fmt.Println("PASS TestEqualBoolSlices")
+	}
+}
+
+type InOutEqualFloat64Slices struct {
+	TestTitle string
+	Ins       [][]float64
+	Out       bool
+}
+
+func TestEqualFloat64Slices(t *testing.T) {
+	fmt.Println("\nSTART TestEqualFloat64Slices")
+	toTest := []InOutEqualFloat64Slices{
+		InOutEqualFloat64Slices{
+			"Different slices with different numbers of elements",
+			[][]float64{f1, f2},
+			false,
+		},
+		InOutEqualFloat64Slices{
+			"Different slices with different orders of elements",
+			[][]float64{f1, f3},
+			false,
+		},
+		InOutEqualFloat64Slices{
+			"Different slices with different elements",
+			[][]float64{f1, f4},
+			false,
+		},
+		InOutEqualFloat64Slices{
+			"Same slices",
+			[][]float64{f1, f1},
+			true,
+		},
+	}
+	pass := true
+	for _, x := range toTest {
+		if EqualFloat64Slices(x.Ins[0], x.Ins[1]) != x.Out {
+			pass = false
+			t.Errorf("ERR TestEqualFloat64Slices: %+v: Slices: %+v AND %+v equal failed. Should be %+v\n", x.TestTitle, x.Ins[0], x.Ins[1], x.Out)
+		} else {
+			fmt.Println("OK TestEqualFloat64Slices: ", x.TestTitle, x.Ins[0], x.Ins[1])
+		}
+	}
+	if pass {
+		fmt.Println("PASS TestEqualFloat64Slices")
+	}
+}
+
+type InOutEqualStringSlices struct {
 	TestTitle string
 	Ins       [][]string
 	Out       bool
 }
 
-type testStringKeyMapSlicesInBoolOut struct {
-	Ins [][]map[string]interface{}
-	Out bool
-}
-
-func TestCompareStringKeyMapSlices(t *testing.T) {
-	fmt.Println("\nSTART TestCompareStringKeyMapSlices")
-	toTest := []testStringKeyMapSlicesInBoolOut{
-		testStringKeyMapSlicesInBoolOut{
-			[][]map[string]interface{}{[]map[string]interface{}{m1, m10}, []map[string]interface{}{m1, m10}},
-			true,
-		},
-		testStringKeyMapSlicesInBoolOut{
-			[][]map[string]interface{}{[]map[string]interface{}{m1, m10}, []map[string]interface{}{m10}},
-			false,
-		},
-		testStringKeyMapSlicesInBoolOut{
-			[][]map[string]interface{}{[]map[string]interface{}{}, []map[string]interface{}{m10}},
-			false,
-		},
-	}
-	for _, x := range toTest {
-		if CompareStringKeyMapSlices(x.Ins[0], x.Ins[1]) != x.Out {
-			t.Errorf("ERR: Slices: %+v AND %+v comparison failed. Should be %+v\n", x.Ins[0], x.Ins[1], x.Out)
-		}
-	}
-}
-
-func TestCompareStringSlices(t *testing.T) {
-	fmt.Println("\nSTART TestCompareStringSlices")
-	toTest := []testStringSliceInBoolOut{
-		testStringSliceInBoolOut{
+func TestEqualStringSlices(t *testing.T) {
+	fmt.Println("\nSTART TestEqualStringSlices")
+	toTest := []InOutEqualStringSlices{
+		InOutEqualStringSlices{
+			"Different slices with different numbers of elements",
 			[][]string{s1, s2},
 			false,
 		},
-		testStringSliceInBoolOut{
+		InOutEqualStringSlices{
+			"Different slices with different orders of elements",
 			[][]string{s1, s3},
 			false,
 		},
-		testStringSliceInBoolOut{
+		InOutEqualStringSlices{
+			"Different slices with different elements",
 			[][]string{s1, s4},
 			false,
 		},
-		testStringSliceInBoolOut{
-			[][]string{s1, s5},
+		InOutEqualStringSlices{
+			"Same slices",
+			[][]string{s1, s1},
 			true,
 		},
 	}
+	pass := true
 	for _, x := range toTest {
-		if CompareStringSlices(x.Ins[0], x.Ins[1]) != x.Out {
-			t.Errorf("ERR: Slices: %+v AND %+v comparison failed. Should be %+v\n", x.Ins[0], x.Ins[1], x.Out)
+		if EqualStringSlices(x.Ins[0], x.Ins[1]) != x.Out {
+			pass = false
+			t.Errorf("ERR TestEqualInterfaces: %+v: Slices: %+v AND %+v equal failed. Should be %+v\n", x.TestTitle, x.Ins[0], x.Ins[1], x.Out)
+		} else {
+			fmt.Println("OK TestEqualStringSlices: ", x.TestTitle, x.Ins[0], x.Ins[1])
 		}
+	}
+	if pass {
+		fmt.Println("PASS TestEqualStringSlices")
 	}
 }
 
@@ -226,76 +373,22 @@ func TestEqualStringKeyInterfaceMaps(t *testing.T) {
 			[]map[string]interface{}{m10, m12},
 			false,
 		},
+		InOutEqualStringKeyInterfaceMaps{
+			"Different maps, different keys different nested values",
+			[]map[string]interface{}{m10, m12},
+			false,
+		},
 	}
+	pass := true
 	for _, x := range toTest {
 		if EqualStringKeyInterfaceMaps(x.Ins[0], x.Ins[1]) != x.Out {
-			t.Errorf("ERR TestEqualStringKeyInterfaceMaps: StringKeyMaps: %+v AND %+v comparison failed. Should be %+v\n", x.Ins[0], x.Ins[1], x.Out)
+			pass = false
+			t.Errorf("ERR TestEqualStringKeyInterfaceMaps  %+v: StringKeyMaps: %+v AND %+v comparison failed. Should be %+v\n", x.TestTitle, x.Ins[0], x.Ins[1], x.Out)
 		} else {
-			fmt.Println("PASS TestEqualStringKeyInterfaceMaps: ", x.TestTitle, x.Ins[0], x.Ins[1])
+			fmt.Println("OK TestEqualStringKeyInterfaceMaps: ", x.TestTitle, x.Ins[0], x.Ins[1])
 		}
 	}
+	if pass {
+		fmt.Println("PASS TestEqualStringKeyInterfaceMaps")
+	}
 }
-
-// type InOutFindTypeForValue struct {
-// 	In  interface{}
-// 	Out reflect.Kind
-// }
-//
-// func TestFindTypeForValue(t *testing.T) {
-// 	fmt.Println("\nSTART TestFindTypeForValue")
-// 	toTest := []InOutFindTypeForValue{
-// 		// String
-// 		InOutFindTypeForValue{"a", reflect.String},
-// 		// Bool
-// 		InOutFindTypeForValue{false, reflect.Bool},
-// 		// Float64
-// 		InOutFindTypeForValue{4.1, reflect.Float64},
-// 		// Map
-// 		InOutFindTypeForValue{map[string]interface{}{"a": 2}, reflect.Map},
-// 		// Slice
-// 		InOutFindTypeForValue{[]string{"b"}, reflect.Slice},
-// 		// String reflect
-// 		InOutFindTypeForValue{reflect.ValueOf("a"), reflect.String},
-// 		// Bool reflect
-// 		InOutFindTypeForValue{reflect.ValueOf(false), reflect.Bool},
-// 		// Float64 reflect
-// 		InOutFindTypeForValue{reflect.ValueOf(4.1), reflect.Float64},
-// 		// Map reflect
-// 		InOutFindTypeForValue{reflect.ValueOf(map[string]interface{}{"a": 2}), reflect.Map},
-// 		// Slice reflect
-// 		InOutFindTypeForValue{reflect.ValueOf([]string{"b"}), reflect.Slice},
-// 	}
-// 	for _, x := range toTest {
-// 		k := FindTypeForValue(x.In)
-// 		if k == x.Out {
-// 			fmt.Println("TestFindTypeForValue passed: ", k)
-// 		} else {
-// 			t.Errorf("ERR: interface{}: %+v TestFindTypeForValue should be %+v. Not %+v\n", x.In, x.Out, k)
-// 		}
-// 	}
-// }
-//
-// type InOutTestLowestReflectValue struct {
-// 	In  interface{}
-// 	Out reflect.Value
-// }
-//
-// func TestLowestReflectValue(t *testing.T) {
-// 	fmt.Println("\nSTART TestLowestReflectValue")
-// 	toTest := []InOutTestLowestReflectValue{
-// 		// Non reflect.Value
-// 		InOutTestLowestReflectValue{"a", reflect.ValueOf("a")},
-// 		// 1 level reflect.Value
-// 		InOutTestLowestReflectValue{reflect.ValueOf("a"), reflect.ValueOf("a")},
-// 		// 5 level reflect.Value
-// 		InOutTestLowestReflectValue{reflect.ValueOf(reflect.ValueOf(reflect.ValueOf(reflect.ValueOf(reflect.ValueOf("a"))))), reflect.ValueOf("a")},
-// 	}
-// 	for _, x := range toTest {
-// 		v := LowestReflectValue(x.In)
-// 		if v.String() == x.Out.String() {
-// 			fmt.Println("TestLowestReflectValue passed: ", v)
-// 		} else {
-// 			t.Errorf("ERR: interface{}: %+v LowestReflectValue should be %+v. Not %+v\n", x.In, x.Out, v)
-// 		}
-// 	}
-// }

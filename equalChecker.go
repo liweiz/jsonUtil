@@ -29,7 +29,7 @@ import (
 	"reflect"
 )
 
-// EqualValues compares two interface{}s' equal. Currently targeted at value in bool/string/float64/reflect.Kind and complex value map/slice derived from them.
+// EqualInterfaces compares two interface{}s' equal. Currently targeted at value in bool/string/float64/reflect.Kind and complex value map/slice derived from them.
 func EqualInterfaces(value1 interface{}, value2 interface{}) bool {
 	if value1 == nil || value2 == nil {
 		return false
@@ -61,6 +61,12 @@ func EqualInterfaces(value1 interface{}, value2 interface{}) bool {
 		if ok {
 			return EqualStringKeyInterfaceMaps(valueA, valueB)
 		}
+	case []bool:
+		valueB := value2.([]bool)
+		return EqualBoolSlices(valueA, valueB)
+	case []float64:
+		valueB := value2.([]float64)
+		return EqualFloat64Slices(valueA, valueB)
 	case []string:
 		valueB := value2.([]string)
 		return EqualStringSlices(valueA, valueB)
@@ -88,7 +94,7 @@ func EqualInterfaces(value1 interface{}, value2 interface{}) bool {
 			for s2, x2 := range valueB {
 				value2B[s2] = interface{}(x2)
 			}
-			return EqualValues(value1A, value2B)
+			return EqualInterfaces(value1A, value2B)
 		}
 	default:
 		fmt.Printf("ERROR EqualValues: Type:%+v Value:%+v for key is out of current options.\n", reflect.TypeOf(value1), reflect.ValueOf(value1))
@@ -109,8 +115,21 @@ func EqualStringKeyInterfaceMapSlices(slice1 []map[string]interface{}, slice2 []
 	return false
 }
 
-// EqualIntSlices finds out if two slices of strings are identical.
-func EqualIntSlices(slice1 []int, slice2 []int) bool {
+// EqualBoolSlices finds out if two slices of strings are identical.
+func EqualBoolSlices(slice1 []bool, slice2 []bool) bool {
+	if len(slice1) == len(slice2) {
+		for i, x := range slice1 {
+			if x != slice2[i] {
+				return false
+			}
+		}
+		return true
+	}
+	return false
+}
+
+// EqualFloat64Slices finds out if two slices of strings are identical.
+func EqualFloat64Slices(slice1 []float64, slice2 []float64) bool {
 	if len(slice1) == len(slice2) {
 		for i, x := range slice1 {
 			if x != slice2[i] {
