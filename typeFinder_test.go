@@ -6,6 +6,32 @@ import (
 	"testing"
 )
 
+type InOutValueTypeInMap struct {
+	TestTitle string
+	In        map[string]interface{}
+	Out       map[string]reflect.Kind
+}
+
+func TestValueTypeInMap(t *testing.T) {
+	fmt.Println("\nSTART TestValueTypeInMap")
+	toTest := []InOutValueTypeInMap{
+		InOutValueTypeInMap{"All values valid map", m4, map[string]reflect.Kind{"[]string": reflect.Slice}},
+		InOutValueTypeInMap{"Map with some invalid value", m15, map[string]reflect.Kind{"bool": reflect.Bool, "map": reflect.Map, "i": reflect.Invalid}},
+	}
+	pass := true
+	for _, x := range toTest {
+		if !EqualInterfaces(ValueTypeInMap(x.In), x.Out) {
+			pass = false
+			t.Errorf("ERR TestValueTypeInMap: %+v failed. Should be %+v\n", x.In, x.Out)
+		} else {
+			fmt.Println("OK TestValueTypeInMap: ", x.TestTitle, x.In)
+		}
+	}
+	if pass {
+		fmt.Println("PASS TestValueTypeInMap")
+	}
+}
+
 type InOutTypeForValue struct {
 	TestTitle string
 	In        interface{}

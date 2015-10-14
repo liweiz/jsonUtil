@@ -32,6 +32,7 @@ var m11 = map[string]interface{}{"bool": true}
 var m12 = map[string]interface{}{"bool": true, "map": m6}
 var m13 = map[string]reflect.Kind{"bool": reflect.Bool, "map": reflect.Map}
 var m14 = map[string]reflect.Kind{"invalid": reflect.Invalid}
+var m15 = map[string]interface{}{"bool": true, "map": m6, "i": nil}
 
 type InOutEqualInterfaces struct {
 	TestTitle string
