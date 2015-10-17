@@ -6,13 +6,13 @@ import (
 )
 
 // ValueTypeInMap explores types for all values in a map.
-func ValueTypeInMap(m map[string]interface{}) map[string]reflect.Kind {
-	r := map[string]reflect.Kind{}
-	for k, v := range m {
-		r[k] = TypeForValue(v)
-	}
-	return r
-}
+// func ValueTypeInMap(m map[string]interface{}) map[string]reflect.Kind {
+// 	r := map[string]reflect.Kind{}
+// 	for k, v := range m {
+// 		r[k] = TypeForValue(v)
+// 	}
+// 	return r
+// }
 
 // TypeForValue finds out the type. It handles a data itself and the data after any times of operations in reflect.ValueOf().
 func TypeForValue(value interface{}) reflect.Kind {
