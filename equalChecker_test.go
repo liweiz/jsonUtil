@@ -159,7 +159,7 @@ func TestEqualInterfaces(t *testing.T) {
 	for _, x := range toTest {
 		if EqualInterfaces(x.Ins[0], x.Ins[1]) != x.Out {
 			pass = false
-			t.Errorf("ERR TestEqualInterfaces: %+v interface{}: %+v AND %+v equal failed. Should be %+v\n", x.TestTitle, x.Ins[0], x.Ins[1], x.Out)
+			t.Errorf("\nERR TestEqualInterfaces: %+v interface{}: %+v AND %+v equal failed. Should be %+v\n", x.TestTitle, x.Ins[0], x.Ins[1], x.Out)
 		} else {
 			fmt.Println("OK TestEqualInterfaces: ", x.TestTitle, x.Ins[0], x.Ins[1])
 		}
@@ -203,7 +203,7 @@ func TestEqualStringKeyInterfaceMapSlices(t *testing.T) {
 	for _, x := range toTest {
 		if EqualStringKeyInterfaceMapSlices(x.Ins[0], x.Ins[1]) != x.Out {
 			pass = false
-			t.Errorf("ERR TestEqualStringKeyInterfaceMapSlices: %+v Slices: %+v AND %+v equal failed. Should be %+v\n", x.TestTitle, x.Ins[0], x.Ins[1], x.Out)
+			t.Errorf("\nERR TestEqualStringKeyInterfaceMapSlices: %+v Slices: %+v AND %+v equal failed. Should be %+v\n", x.TestTitle, x.Ins[0], x.Ins[1], x.Out)
 		} else {
 			fmt.Println("OK TestEqualStringKeyInterfaceMapSlices: ", x.TestTitle, x.Ins[0], x.Ins[1])
 		}
@@ -247,7 +247,7 @@ func TestEqualBoolSlices(t *testing.T) {
 	for _, x := range toTest {
 		if EqualBoolSlices(x.Ins[0], x.Ins[1]) != x.Out {
 			pass = false
-			t.Errorf("ERR TestEqualBoolSlices: %+v: Slices: %+v AND %+v equal failed. Should be %+v\n", x.TestTitle, x.Ins[0], x.Ins[1], x.Out)
+			t.Errorf("\nERR TestEqualBoolSlices: %+v: Slices: %+v AND %+v equal failed. Should be %+v\n", x.TestTitle, x.Ins[0], x.Ins[1], x.Out)
 		} else {
 			fmt.Println("OK TestEqualBoolSlices: ", x.TestTitle, x.Ins[0], x.Ins[1])
 		}
@@ -291,7 +291,7 @@ func TestEqualFloat64Slices(t *testing.T) {
 	for _, x := range toTest {
 		if EqualFloat64Slices(x.Ins[0], x.Ins[1]) != x.Out {
 			pass = false
-			t.Errorf("ERR TestEqualFloat64Slices: %+v: Slices: %+v AND %+v equal failed. Should be %+v\n", x.TestTitle, x.Ins[0], x.Ins[1], x.Out)
+			t.Errorf("\nERR TestEqualFloat64Slices: %+v: Slices: %+v AND %+v equal failed. Should be %+v\n", x.TestTitle, x.Ins[0], x.Ins[1], x.Out)
 		} else {
 			fmt.Println("OK TestEqualFloat64Slices: ", x.TestTitle, x.Ins[0], x.Ins[1])
 		}
@@ -335,7 +335,7 @@ func TestEqualStringSlices(t *testing.T) {
 	for _, x := range toTest {
 		if EqualStringSlices(x.Ins[0], x.Ins[1]) != x.Out {
 			pass = false
-			t.Errorf("ERR TestEqualInterfaces: %+v: Slices: %+v AND %+v equal failed. Should be %+v\n", x.TestTitle, x.Ins[0], x.Ins[1], x.Out)
+			t.Errorf("\nERR TestEqualInterfaces: %+v: Slices: %+v AND %+v equal failed. Should be %+v\n", x.TestTitle, x.Ins[0], x.Ins[1], x.Out)
 		} else {
 			fmt.Println("OK TestEqualStringSlices: ", x.TestTitle, x.Ins[0], x.Ins[1])
 		}
@@ -384,7 +384,7 @@ func TestEqualStringKeyInterfaceMaps(t *testing.T) {
 	for _, x := range toTest {
 		if EqualStringKeyInterfaceMaps(x.Ins[0], x.Ins[1]) != x.Out {
 			pass = false
-			t.Errorf("ERR TestEqualStringKeyInterfaceMaps  %+v: StringKeyMaps: %+v AND %+v comparison failed. Should be %+v\n", x.TestTitle, x.Ins[0], x.Ins[1], x.Out)
+			t.Errorf("\nERR TestEqualStringKeyInterfaceMaps  %+v: StringKeyMaps: %+v AND %+v comparison failed. Should be %+v\n", x.TestTitle, x.Ins[0], x.Ins[1], x.Out)
 		} else {
 			fmt.Println("OK TestEqualStringKeyInterfaceMaps: ", x.TestTitle, x.Ins[0], x.Ins[1])
 		}

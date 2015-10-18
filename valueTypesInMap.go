@@ -16,14 +16,14 @@ func (v ValueTypesInMap) Find(parentKey string, key string, noOfSliceLvs int) (o
 }
 
 // Delete removes a MapValueType from the slice.
-func (v ValueTypesInMap) Delete(parentKey string, key string, noOfSliceLvs int) {
+func (v ValueTypesInMap) Delete(parentKey string, key string, noOfSliceLvs int) ValueTypesInMap {
 	vv := ValueTypesInMap{}
 	for _, x := range v {
 		if !(parentKey == x.ParentKey && key == x.ClosestKey && noOfSliceLvs == x.NoOfSliceLevels) {
 			vv = append(vv, x)
 		}
 	}
-	v = vv
+	return vv
 }
 
 // Append appends a MapValueType to ValueTypesInMap. If the is a MapValueType with the same path already, 1) the existing one's Type == reflect.Invalid, delete the existing one, append the new one and return appended = true; 2) otherwise, the new one will not be appended. It will return the existing one with appended = false.

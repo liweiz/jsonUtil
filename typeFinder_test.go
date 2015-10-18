@@ -65,7 +65,7 @@ func TestTypeForValue(t *testing.T) {
 			fmt.Println("OK TestTypeForValue: ", x.TestTitle, k)
 		} else {
 			pass = false
-			t.Errorf("ERR TestTypeForValue: interface{}: %+v should be %+v. Not %+v\n", x.In, x.Out, k)
+			t.Errorf("\nERR TestTypeForValue: interface{}: %+v should be %+v. Not %+v\n", x.In, x.Out, k)
 		}
 	}
 	if pass {
@@ -93,7 +93,7 @@ func TestLowestReflectValue(t *testing.T) {
 			fmt.Println("OK TestLowestReflectValue: ", x.TestTitle, v)
 		} else {
 			pass = false
-			t.Errorf("ERR LowestReflectValue: interface{}: %+v should be %+v. Not %+v\n", x.In, x.Out, v)
+			t.Errorf("\nERR LowestReflectValue: interface{}: %+v should be %+v. Not %+v\n", x.In, x.Out, v)
 		}
 	}
 	if pass {

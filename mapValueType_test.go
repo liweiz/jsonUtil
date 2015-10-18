@@ -40,7 +40,7 @@ func TestValueTypeForPath(t *testing.T) {
 			fmt.Println("OK TestValueTypeForPath: ", x.TestTitle, x.Ins)
 		} else {
 			pass = false
-			t.Errorf("ERR TestValueTypeForPath: %+v input: %+v failed. Should be %+v\n", x.TestTitle, x.Ins, x.Out)
+			t.Errorf("\nERR TestValueTypeForPath: %+v input: %+v failed. Should be %+v\n", x.TestTitle, x.Ins, x.Out)
 		}
 	}
 	if pass {

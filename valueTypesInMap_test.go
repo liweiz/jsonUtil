@@ -29,8 +29,9 @@ var samlpeValueTypesInMap = ValueTypesInMap{
 	MapValueType{"", "E", 0, reflect.Slice},
 	MapValueType{"", "F", 0, reflect.Map},
 	MapValueType{"E", "a", 1, reflect.Bool},
-	MapValueType{"F", "c", 1, reflect.String},
-	MapValueType{"F", "d", 1, reflect.Invalid},
+	MapValueType{"E", "b", 1, reflect.Invalid},
+	MapValueType{"F", "c", 0, reflect.String},
+	MapValueType{"F", "d", 0, reflect.Invalid},
 }
 
 type InFindValueTypesInMap struct {
@@ -112,22 +113,83 @@ func TestFindValueTypesInMap(t *testing.T) {
 	}
 	pass := true
 	for _, x := range toTest {
-		out, found := samlpeValueTypesInMap.Find(x.Ins.ParentKey, x.Ins.Key, x.Ins.NoOfSliceLvs)
+		s := samlpeValueTypesInMap
+		out, found := s.Find(x.Ins.ParentKey, x.Ins.Key, x.Ins.NoOfSliceLvs)
 		if found == x.Outs.Found {
 			if found {
 				if out.ParentKey == x.Outs.MapValueType.ParentKey && out.ClosestKey == x.Outs.MapValueType.ClosestKey && out.NoOfSliceLevels == x.Outs.MapValueType.NoOfSliceLevels && out.Type == x.Outs.MapValueType.Type {
 					fmt.Println("OK TestFindValueTypesInMap: ", x.TestTitle, x.Ins, x.Outs)
 				} else {
-					t.Errorf("ERR TestFindValueTypesInMap: %+v find for: %+v failed. Should be %+v\n", x.TestTitle, x.Ins, x.Outs)
+					pass = false
+					t.Errorf("\nERR TestFindValueTypesInMap: %+v find for: %+v failed. Should be %+v\n", x.TestTitle, x.Ins, x.Outs)
 				}
 			} else {
 				fmt.Println("OK TestFindValueTypesInMap: ", x.TestTitle, x.Ins, x.Outs)
 			}
 		} else {
-			t.Errorf("ERR TestFindValueTypesInMap: %+v find for: %+v failed. Should be %+v\n", x.TestTitle, x.Ins, x.Outs)
+			pass = false
+			t.Errorf("\nERR TestFindValueTypesInMap: %+v find for: %+v failed. Should be %+v\n", x.TestTitle, x.Ins, x.Outs)
 		}
 	}
 	if pass {
 		fmt.Println("PASS TestFindValueTypesInMap")
+	}
+}
+
+type InOutDeleteValueTypesInMap struct {
+	TestTitle string
+	Ins       InFindValueTypesInMap
+	Out       ValueTypesInMap
+}
+
+func TestDeleteValueTypesInMap(t *testing.T) {
+	fmt.Println("\nSTART TestDeleteValueTypesInMap")
+	toTest := []InOutDeleteValueTypesInMap{
+		InOutDeleteValueTypesInMap{
+			"Delete a non-null root existing path with no slice level",
+			InFindValueTypesInMap{"", "B", 0},
+			ValueTypesInMap{
+				MapValueType{"", "A", 0, reflect.Invalid},
+				// MapValueType{"", "B", 0, reflect.Float64},
+				MapValueType{"", "C", 0, reflect.String},
+				MapValueType{"", "D", 0, reflect.Bool},
+				MapValueType{"", "E", 0, reflect.Slice},
+				MapValueType{"", "F", 0, reflect.Map},
+				MapValueType{"E", "a", 1, reflect.Bool},
+				MapValueType{"E", "b", 1, reflect.Invalid},
+				MapValueType{"F", "c", 0, reflect.String},
+				MapValueType{"F", "d", 0, reflect.Invalid},
+			},
+		},
+	}
+	pass := true
+	for _, x := range toTest {
+		s := samlpeValueTypesInMap
+		s = s.Delete(x.Ins.ParentKey, x.Ins.Key, x.Ins.NoOfSliceLvs)
+		ok := true
+		if len(s) == len(x.Out) {
+			i := 0
+			for _, xx := range s {
+				for _, xxx := range x.Out {
+					if xx.ParentKey == xxx.ParentKey && xx.ClosestKey == xxx.ClosestKey && xx.NoOfSliceLevels == xxx.NoOfSliceLevels && xx.Type == xxx.Type {
+						i++
+					}
+				}
+			}
+			if i == len(s) {
+				fmt.Println("OK TestDeleteValueTypesInMap: ", x.TestTitle, x.Ins, x.Out)
+			} else {
+				ok = false
+			}
+		} else {
+			ok = false
+		}
+		if !ok {
+			pass = false
+			t.Errorf("\nERR TestDeleteValueTypesInMap: %+v delete for: %+v failed. Should be %+v\n", x.TestTitle, x.Ins, x.Out)
+		}
+	}
+	if pass {
+		fmt.Println("PASS TestDeleteValueTypesInMap")
 	}
 }
