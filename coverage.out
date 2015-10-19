@@ -89,8 +89,10 @@ _/Users/liweizhang/google_drive/goworkplace/src/jsonutil/valueTypesInMap.go:19.9
 _/Users/liweizhang/google_drive/goworkplace/src/jsonutil/valueTypesInMap.go:26.2,26.11 1 1
 _/Users/liweizhang/google_drive/goworkplace/src/jsonutil/valueTypesInMap.go:21.22,22.94 1 1
 _/Users/liweizhang/google_drive/goworkplace/src/jsonutil/valueTypesInMap.go:22.94,24.4 1 1
-_/Users/liweizhang/google_drive/goworkplace/src/jsonutil/valueTypesInMap.go:31.89,33.11 2 0
-_/Users/liweizhang/google_drive/goworkplace/src/jsonutil/valueTypesInMap.go:40.2,41.16 2 0
-_/Users/liweizhang/google_drive/goworkplace/src/jsonutil/valueTypesInMap.go:33.11,34.32 1 0
-_/Users/liweizhang/google_drive/goworkplace/src/jsonutil/valueTypesInMap.go:34.32,36.4 1 0
-_/Users/liweizhang/google_drive/goworkplace/src/jsonutil/valueTypesInMap.go:36.4,38.4 1 0
+_/Users/liweizhang/google_drive/goworkplace/src/jsonutil/valueTypesInMap.go:30.86,32.11 2 1
+_/Users/liweizhang/google_drive/goworkplace/src/jsonutil/valueTypesInMap.go:42.2,43.16 2 1
+_/Users/liweizhang/google_drive/goworkplace/src/jsonutil/valueTypesInMap.go:32.11,33.32 1 1
+_/Users/liweizhang/google_drive/goworkplace/src/jsonutil/valueTypesInMap.go:33.32,34.33 1 1
+_/Users/liweizhang/google_drive/goworkplace/src/jsonutil/valueTypesInMap.go:37.4,37.62 1 1
+_/Users/liweizhang/google_drive/goworkplace/src/jsonutil/valueTypesInMap.go:34.33,36.5 1 1
+_/Users/liweizhang/google_drive/goworkplace/src/jsonutil/valueTypesInMap.go:38.4,40.4 1 0

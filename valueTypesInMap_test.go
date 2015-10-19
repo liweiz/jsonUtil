@@ -193,3 +193,110 @@ func TestDeleteValueTypesInMap(t *testing.T) {
 		fmt.Println("PASS TestDeleteValueTypesInMap")
 	}
 }
+
+type OutAppendValueTypesInMap struct {
+	Out      ValueTypesInMap
+	Appended bool
+}
+
+type InOutAppendValueTypesInMap struct {
+	TestTitle string
+	In        MapValueType
+	Outs      OutAppendValueTypesInMap
+}
+
+func TestAppendValueTypesInMap(t *testing.T) {
+	fmt.Println("\nSTART TestAppendValueTypesInMap")
+	toTest := []InOutAppendValueTypesInMap{
+		InOutAppendValueTypesInMap{
+			"Append a non-existing path",
+			MapValueType{"", "X", 0, reflect.Invalid},
+			OutAppendValueTypesInMap{
+				ValueTypesInMap{
+					MapValueType{"", "A", 0, reflect.Invalid},
+					MapValueType{"", "B", 0, reflect.Float64},
+					MapValueType{"", "C", 0, reflect.String},
+					MapValueType{"", "D", 0, reflect.Bool},
+					MapValueType{"", "E", 0, reflect.Slice},
+					MapValueType{"", "F", 0, reflect.Map},
+					MapValueType{"E", "a", 1, reflect.Bool},
+					MapValueType{"E", "b", 1, reflect.Invalid},
+					MapValueType{"F", "c", 0, reflect.String},
+					MapValueType{"F", "d", 0, reflect.Invalid},
+					MapValueType{"", "X", 0, reflect.Invalid},
+				},
+				true,
+			},
+		},
+		InOutAppendValueTypesInMap{
+			"Append an existing path with invalid type",
+			MapValueType{"", "A", 0, reflect.Invalid},
+			OutAppendValueTypesInMap{
+				ValueTypesInMap{
+					MapValueType{"", "A", 0, reflect.Invalid},
+					MapValueType{"", "B", 0, reflect.Float64},
+					MapValueType{"", "C", 0, reflect.String},
+					MapValueType{"", "D", 0, reflect.Bool},
+					MapValueType{"", "E", 0, reflect.Slice},
+					MapValueType{"", "F", 0, reflect.Map},
+					MapValueType{"E", "a", 1, reflect.Bool},
+					MapValueType{"E", "b", 1, reflect.Invalid},
+					MapValueType{"F", "c", 0, reflect.String},
+					MapValueType{"F", "d", 0, reflect.Invalid},
+				},
+				false,
+			},
+		},
+		InOutAppendValueTypesInMap{
+			"Append an existing path with valid type",
+			MapValueType{"", "A", 0, reflect.Bool},
+			OutAppendValueTypesInMap{
+				ValueTypesInMap{
+					MapValueType{"", "B", 0, reflect.Float64},
+					MapValueType{"", "C", 0, reflect.String},
+					MapValueType{"", "D", 0, reflect.Bool},
+					MapValueType{"", "E", 0, reflect.Slice},
+					MapValueType{"", "F", 0, reflect.Map},
+					MapValueType{"E", "a", 1, reflect.Bool},
+					MapValueType{"E", "b", 1, reflect.Invalid},
+					MapValueType{"F", "c", 0, reflect.String},
+					MapValueType{"F", "d", 0, reflect.Invalid},
+					MapValueType{"", "A", 0, reflect.Bool},
+				},
+				true,
+			},
+		},
+	}
+	pass := true
+	for _, x := range toTest {
+		s := samlpeValueTypesInMap
+		ss, added := s.Append(x.In)
+		ok := true
+		if len(ss) == len(x.Outs.Out) {
+			if added == x.Outs.Appended {
+				n := 0
+				for i, xx := range ss {
+					if xx.ParentKey == x.Outs.Out[i].ParentKey && xx.ClosestKey == x.Outs.Out[i].ClosestKey && xx.NoOfSliceLevels == x.Outs.Out[i].NoOfSliceLevels && xx.Type == x.Outs.Out[i].Type {
+						n++
+					}
+				}
+				if n == len(ss) {
+					fmt.Println("OK TestAppendValueTypesInMap: ", x.TestTitle, x.In, x.Outs)
+				} else {
+					ok = false
+				}
+			} else {
+				ok = false
+			}
+		} else {
+			ok = false
+		}
+		if !ok {
+			pass = false
+			t.Errorf("\nERR TestAppendValueTypesInMap: %+v append for: %+v failed. Should be %+v\n", x.TestTitle, x.In, x.Outs)
+		}
+	}
+	if pass {
+		fmt.Println("PASS TestAppendValueTypesInMap")
+	}
+}

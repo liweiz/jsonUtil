@@ -26,17 +26,19 @@ func (v ValueTypesInMap) Delete(parentKey string, key string, noOfSliceLvs int) 
 	return vv
 }
 
-// Append appends a MapValueType to ValueTypesInMap. If the is a MapValueType with the same path already, 1) the existing one's Type == reflect.Invalid, delete the existing one, append the new one and return appended = true; 2) otherwise, the new one will not be appended. It will return the existing one with appended = false.
-// In short, it treat the schema of the JSON as fixed and let other mechanism to handle dynamic JSON schema, if needed.
-func (v ValueTypesInMap) Append(m MapValueType) (fromTypes MapValueType, appended bool) {
+// Append appends a MapValueType to ValueTypesInMap. It treats the schema of the JSON as fixed and let other mechanism to handle dynamic JSON schema, if needed. A new slice is always returned. the only difference is the appended value that indicates if the value is really appended.
+func (v ValueTypesInMap) Append(m MapValueType) (out ValueTypesInMap, appended bool) {
 	o, found := v.Find(m.ParentKey, m.ClosestKey, m.NoOfSliceLevels)
 	if found {
 		if o.Type == reflect.Invalid {
-			v.Delete(m.ParentKey, m.ClosestKey, m.NoOfSliceLevels)
+			if m.Type == reflect.Invalid {
+				return v, false
+			}
+			v = v.Delete(m.ParentKey, m.ClosestKey, m.NoOfSliceLevels)
 		} else {
-			return MapValueType{}, false
+			return v, false
 		}
 	}
 	v = append(v, m)
-	return m, true
+	return v, true
 }
