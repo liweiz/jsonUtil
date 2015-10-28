@@ -10,30 +10,39 @@ import "reflect"
 
 // MapValueType stores the path to a value and the type of the value. If it's under root key, the ParentKey = "".
 type MapValueType struct {
-	ParentKey       string
-	ClosestKey      string
-	NoOfSliceLevels int
-	Type            reflect.Kind
+	ParentKey             string
+	ClosestKey            string
+	ParentNoOfSliceLevels int
+	NoOfSliceLevels       int
+	Type                  reflect.Kind
+}
+
+// IsForSameNode finds out if the given MapValueType is the same node as the receiver.
+func (m MapValueType) IsForSameNode(mm MapValueType) bool {
+	if m.ParentKey == mm.ParentKey && m.ClosestKey == mm.ClosestKey && m.ParentNoOfSliceLevels == mm.ParentNoOfSliceLevels && m.NoOfSliceLevels == mm.NoOfSliceLevels {
+		return x, true
+	}
+	return false
 }
 
 // ValueTypeForPath gets MapValueType for a value.
-func ValueTypeForPath(parentKey string, key string, noOfSliceLvs int, v interface{}) MapValueType {
-	return MapValueType{parentKey, key, noOfSliceLvs, TypeForValue(v)}
+func ValueTypeForPath(parentKey string, key string, parentNoOfSliceLevels int, noOfSliceLvs int, v interface{}) MapValueType {
+	return MapValueType{parentKey, key, parentNoOfSliceLevels, noOfSliceLvs, TypeForValue(v)}
 }
 
 // ValueTypesForMap gets all type info in the form of MapValueType for a map.
-func ValueTypesForMap(parentKey string, noOfSliceLvs int, m map[string]interface{}) []MapValueType {
+func ValueTypesForMap(parentKey string, parentNoOfSliceLevels int, noOfSliceLvs int, m map[string]interface{}) []MapValueType {
 	r := []MapValueType{}
 	for k, v := range m {
-		r = append(r, ValueTypeForPath(parentKey, k, noOfSliceLvs, v))
+		r = append(r, ValueTypeForPath(parentKey, k, parentNoOfSliceLevels, noOfSliceLvs, v))
 	}
 	return r
 }
 
 // ValueTypeForSlice gets type info in the form of MapValueType for a homogeneous slice.
-func ValueTypeForSlice(parentKey string, key string, noOfSliceLvs int, s []interface{}) MapValueType {
+func ValueTypeForSlice(parentKey string, key string, parentNoOfSliceLevels int, noOfSliceLvs int, s []interface{}) MapValueType {
 	if len(s) > 0 {
-		return ValueTypeForPath(parentKey, key, noOfSliceLvs, s[1])
+		return ValueTypeForPath(parentKey, key, parentNoOfSliceLevels, noOfSliceLvs, s[1])
 	}
-	return MapValueType{parentKey, key, noOfSliceLvs, reflect.Invalid}
+	return MapValueType{parentKey, key, parentNoOfSliceLevels, noOfSliceLvs, reflect.Invalid}
 }
