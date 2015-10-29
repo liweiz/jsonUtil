@@ -20,7 +20,7 @@ type MapValueType struct {
 // IsForSameNode finds out if the given MapValueType is the same node as the receiver.
 func (m MapValueType) IsForSameNode(mm MapValueType) bool {
 	if m.ParentKey == mm.ParentKey && m.ClosestKey == mm.ClosestKey && m.ParentNoOfSliceLevels == mm.ParentNoOfSliceLevels && m.NoOfSliceLevels == mm.NoOfSliceLevels {
-		return x, true
+		return true
 	}
 	return false
 }

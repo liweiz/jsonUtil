@@ -78,87 +78,25 @@ type ValueTypesInMap []MapValueType
 // 1. Find out the upper and lower linked nodes for each node in receiver
 // 2. Find out the top nodes among receiver
 // 3. Start chain exploration from top nodes
-func (v ValueTypesInMap) Chains() (chains []ValueTypesInMap) {
-	r := ValueTypesInMap{}
-	a := AllNodeWithNeighbor()
-	t := AllTopNodes(a)
-}
-
-// func (v ValueTypesInMap) AllSubchainsForNode(node MapValueType) []ValueTypesInMap {
-//
+// func (v ValueTypesInMap) Chains() (chains []ValueTypesInMap) {
+// 	r := ValueTypesInMap{}
+// 	a := AllNodeWithNeighbor()
+// 	t := AllTopNodes(a)
 // }
 
-// Chains stores the base and its chains derived from the base.
-type Chains struct {
-	Chains         []ValueTypesInMap
-	Base           ValueTypesInMap
-	NodesNeighbors []NodeWithNeighbor
-}
-
-// BaseChain returns a Chains with Base and NodesInfo set.
-func BaseChain(base ValueTypesInMap) Chains {
-	c := Chains{}
-	c.Base = base
-	c.NodesNeighbors = c.Base.AllNodeWithNeighbor()
-	return c
-}
-
-// ExpandToOneMoreLevelSubchain adds one more lower level nodes to chains where applicable. Empty chain will not be included.
-func (c Chains) ExpandToOneMoreLevelSubchain() []ValueTypesInMap {
-	r := []ValueTypesInMap{}
-	// Go through all known chains.
-	for _, ch := range c.Chains {
-		chainExpandable := false
-		if len(ch) > 0 {
-			// Find NodeWithNeighbor for last node in each known chain.
-			n, found := FindInNodeWithNeighbors(c.NodesNeighbors, ch[len(ch)-1])
-			if found {
-				chainExpandable = true
-				for _, x := range n.Lower {
-					y := append(ch, x)
-					r = append(r, y)
-				}
-			}
-		} else {
-			chainExpandable = true
-		}
-		if !chainExpandable {
-			r = append(r, ch)
+// AllSubchainsForNode gets all subchains for a node.
+func (v ValueTypesInMap) AllSubchainsForNode(node MapValueType) []ValueTypesInMap {
+	c := BaseChain(v)
+	c.Chains = []ValueTypesInMap{ValueTypesInMap{node}}
+	expanded := true
+	for expanded {
+		var h []ValueTypesInMap
+		h, expanded = c.ExpandToOneMoreLevelSubchain()
+		if expanded {
+			c.Chains = h
 		}
 	}
-	return r
-}
-
-// NodeWithNeighbor is the node with its upper and lower nodes.
-type NodeWithNeighbor struct {
-	Node  MapValueType
-	Upper ValueTypesInMap
-	Lower ValueTypesInMap
-}
-
-// FindInNodeWithNeighbors returns the MapValueType that matches the search criteria. It returns false, if no match found.
-func FindInNodeWithNeighbors(n []NodeWithNeighbor, v MapValueType) (node NodeWithNeighbor, found bool) {
-	for _, x := range n {
-		if v.IsForSameNode(x.Node) {
-			return x, true
-		}
-	}
-	return NodeWithNeighbor{}, false
-}
-
-// AllTopNodes returns all top nodes.
-func AllTopNodes(n []NodeWithNeighbor) ValueTypesInMap {
-	t := []NodeWithNeighbor{}
-	for _, x := range n {
-		if len(x.Upper) == 0 {
-			t = append(t, x)
-		}
-	}
-	r := ValueTypesInMap{}
-	for _, y := range t {
-		r = append(r, y.Node)
-	}
-	return r
+	return c.Chains
 }
 
 // AllNodeWithNeighbor returns NodeWithNeighbor for each node in receiver.
