@@ -161,7 +161,7 @@ func (v ValueTypesInMap) FindForKeys(parentKey string, key string) (out []MapVal
 // Find returns the MapValueType that matches the search criteria. It returns false, if no match found.
 func (v ValueTypesInMap) Find(parentKey string, key string, parentNoOfSliceLevels int, noOfSliceLvs int) (out MapValueType, found bool) {
 	for _, x := range v {
-		if parentKey == x.ParentKey && key == x.ClosestKey && parentNoOfSliceLevels == x.ParentNoOfSliceLevels && noOfSliceLvs == x.NoOfSliceLevels {
+		if x.IsForSameNode(MapValueType{parentKey, key, parentNoOfSliceLevels, noOfSliceLvs, reflect.Invalid}) {
 			return x, true
 		}
 	}
@@ -172,7 +172,7 @@ func (v ValueTypesInMap) Find(parentKey string, key string, parentNoOfSliceLevel
 func (v ValueTypesInMap) Delete(parentKey string, key string, parentNoOfSliceLevels int, noOfSliceLvs int) ValueTypesInMap {
 	vv := ValueTypesInMap{}
 	for _, x := range v {
-		if !(parentKey == x.ParentKey && key == x.ClosestKey && parentNoOfSliceLevels == x.ParentNoOfSliceLevels && noOfSliceLvs == x.NoOfSliceLevels) {
+		if !x.IsForSameNode(MapValueType{parentKey, key, parentNoOfSliceLevels, noOfSliceLvs, reflect.Invalid}) {
 			vv = append(vv, x)
 		}
 	}

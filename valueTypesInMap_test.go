@@ -13,25 +13,33 @@ import (
 //   "C": "This is",
 //   "D": true,
 //   "E": [
-//     "a": false,
-//     "b": null
+//     false,
+//     true
 //   ],
 //   "F": {
-//     "c": "goo",
-//     "d": null
-//   }
+//     "a": "goo",
+//     "b": null
+//   },
+// 	"G": [
+//     [
+// 			"aa",
+// 			"bb"
+// 		]
+//   ],
 // }
-var samlpeValueTypesInMap = ValueTypesInMap{
+var SamlpeValueTypesInMap = ValueTypesInMap{
 	MapValueType{"", "A", 0, 0, reflect.Invalid},
 	MapValueType{"", "B", 0, 0, reflect.Float64},
 	MapValueType{"", "C", 0, 0, reflect.String},
 	MapValueType{"", "D", 0, 0, reflect.Bool},
 	MapValueType{"", "E", 0, 0, reflect.Slice},
+	MapValueType{"", "E", 0, 1, reflect.Bool},
 	MapValueType{"", "F", 0, 0, reflect.Map},
-	MapValueType{"E", "a", 1, 1, reflect.Bool},
-	MapValueType{"E", "b", 1, 1, reflect.Invalid},
-	MapValueType{"F", "c", 0, 0, reflect.String},
-	MapValueType{"F", "d", 0, 0, reflect.Invalid},
+	MapValueType{"F", "a", 0, 0, reflect.String},
+	MapValueType{"F", "b", 0, 0, reflect.Invalid},
+	MapValueType{"", "G", 0, 0, reflect.Slice},
+	MapValueType{"", "G", 0, 2, reflect.Slice},
+	MapValueType{"", "G", 1, 2, reflect.String},
 }
 
 type InFindValueTypesInMap struct {
@@ -55,8 +63,9 @@ type InOutFindValueTypesInMap struct {
 func TestFindValueTypesInMap(t *testing.T) {
 	fmt.Println("\nSTART TestFindValueTypesInMap")
 	toTest := []InOutFindValueTypesInMap{
+		// No slice level
 		InOutFindValueTypesInMap{
-			"Find a non-null root existing path with no slice level",
+			"Find a non-null direct-key-parent existing path, root key",
 			InFindValueTypesInMap{"", "B", 0, 0},
 			OutFindValueTypesInMap{
 				MapValueType{"", "B", 0, 0, reflect.Float64},
@@ -64,7 +73,7 @@ func TestFindValueTypesInMap(t *testing.T) {
 			},
 		},
 		InOutFindValueTypesInMap{
-			"Find a null root existing path with no slice level",
+			"Find a null direct-key-parent existing path, root key",
 			InFindValueTypesInMap{"", "A", 0, 0},
 			OutFindValueTypesInMap{
 				MapValueType{"", "A", 0, 0, reflect.Invalid},
@@ -72,49 +81,50 @@ func TestFindValueTypesInMap(t *testing.T) {
 			},
 		},
 		InOutFindValueTypesInMap{
-			"Find a non-null non-root existing path with no slice level",
-			InFindValueTypesInMap{"F", "c", 0, 0},
+			"Find a non-null direct-key-parent existing path, non-root key",
+			InFindValueTypesInMap{"F", "a", 0, 0},
 			OutFindValueTypesInMap{
-				MapValueType{"F", "c", 0, 0, reflect.String},
+				MapValueType{"F", "a", 0, 0, reflect.String},
 				true,
 			},
 		},
 		InOutFindValueTypesInMap{
-			"Find a null non-root existing path with no slice level",
-			InFindValueTypesInMap{"F", "d", 0, 0},
+			"Find a null direct-key-parent existing path, non-root key",
+			InFindValueTypesInMap{"F", "b", 0, 0},
 			OutFindValueTypesInMap{
-				MapValueType{"F", "d", 0, 0, reflect.Invalid},
+				MapValueType{"F", "b", 0, 0, reflect.Invalid},
+				true,
+			},
+		},
+		// With slice level
+		InOutFindValueTypesInMap{
+			"Find a non-null direct-key-parent existing path, root key",
+			InFindValueTypesInMap{"", "E", 0, 0},
+			OutFindValueTypesInMap{
+				MapValueType{"", "E", 0, 0, reflect.Slice},
 				true,
 			},
 		},
 		InOutFindValueTypesInMap{
-			"Find a non-null non-root existing path with slice level",
-			InFindValueTypesInMap{"E", "a", 1, 1},
+			"Find a non-null non-direct-key-parent existing path, root key",
+			InFindValueTypesInMap{"", "E", 0, 1},
 			OutFindValueTypesInMap{
-				MapValueType{"E", "a", 1, 1, reflect.Bool},
+				MapValueType{"", "E", 0, 1, reflect.Bool},
 				true,
 			},
 		},
 		InOutFindValueTypesInMap{
-			"Find a null non-root existing path with slice level",
-			InFindValueTypesInMap{"E", "b", 1, 1},
+			"Find a nested non-null non-direct-key-parent existing path, root key",
+			InFindValueTypesInMap{"", "G", 1, 2},
 			OutFindValueTypesInMap{
-				MapValueType{"E", "b", 1, 1, reflect.Invalid},
+				MapValueType{"", "G", 1, 2, reflect.String},
 				true,
-			},
-		},
-		InOutFindValueTypesInMap{
-			"Find a null non-root existing path with slice level, not able to be found",
-			InFindValueTypesInMap{"E", "b", 2, 2},
-			OutFindValueTypesInMap{
-				MapValueType{},
-				false,
 			},
 		},
 	}
 	pass := true
 	for _, x := range toTest {
-		s := samlpeValueTypesInMap
+		s := SamlpeValueTypesInMap
 		out, found := s.Find(x.Ins.ParentKey, x.Ins.Key, x.Ins.ParentNoOfSliceLvs, x.Ins.NoOfSliceLvs)
 		if found == x.Outs.Found {
 			if found {
@@ -155,17 +165,19 @@ func TestDeleteValueTypesInMap(t *testing.T) {
 				MapValueType{"", "C", 0, 0, reflect.String},
 				MapValueType{"", "D", 0, 0, reflect.Bool},
 				MapValueType{"", "E", 0, 0, reflect.Slice},
+				MapValueType{"", "E", 0, 1, reflect.Bool},
 				MapValueType{"", "F", 0, 0, reflect.Map},
-				MapValueType{"E", "a", 1, 1, reflect.Bool},
-				MapValueType{"E", "b", 1, 1, reflect.Invalid},
-				MapValueType{"F", "c", 0, 0, reflect.String},
-				MapValueType{"F", "d", 0, 0, reflect.Invalid},
+				MapValueType{"F", "a", 0, 0, reflect.String},
+				MapValueType{"F", "b", 0, 0, reflect.Invalid},
+				MapValueType{"", "G", 0, 0, reflect.Slice},
+				MapValueType{"", "G", 0, 2, reflect.Slice},
+				MapValueType{"", "G", 1, 2, reflect.String},
 			},
 		},
 	}
 	pass := true
 	for _, x := range toTest {
-		s := samlpeValueTypesInMap
+		s := SamlpeValueTypesInMap
 		s = s.Delete(x.Ins.ParentKey, x.Ins.Key, x.Ins.ParentNoOfSliceLvs, x.Ins.NoOfSliceLvs)
 		ok := true
 		if len(s) == len(x.Out) {
@@ -219,11 +231,13 @@ func TestAppendValueTypesInMap(t *testing.T) {
 					MapValueType{"", "C", 0, 0, reflect.String},
 					MapValueType{"", "D", 0, 0, reflect.Bool},
 					MapValueType{"", "E", 0, 0, reflect.Slice},
+					MapValueType{"", "E", 0, 1, reflect.Bool},
 					MapValueType{"", "F", 0, 0, reflect.Map},
-					MapValueType{"E", "a", 1, 1, reflect.Bool},
-					MapValueType{"E", "b", 1, 1, reflect.Invalid},
-					MapValueType{"F", "c", 0, 0, reflect.String},
-					MapValueType{"F", "d", 0, 0, reflect.Invalid},
+					MapValueType{"F", "a", 0, 0, reflect.String},
+					MapValueType{"F", "b", 0, 0, reflect.Invalid},
+					MapValueType{"", "G", 0, 0, reflect.Slice},
+					MapValueType{"", "G", 0, 2, reflect.Slice},
+					MapValueType{"", "G", 1, 2, reflect.String},
 					MapValueType{"", "X", 0, 0, reflect.Invalid},
 				},
 				true,
@@ -239,11 +253,13 @@ func TestAppendValueTypesInMap(t *testing.T) {
 					MapValueType{"", "C", 0, 0, reflect.String},
 					MapValueType{"", "D", 0, 0, reflect.Bool},
 					MapValueType{"", "E", 0, 0, reflect.Slice},
+					MapValueType{"", "E", 0, 1, reflect.Bool},
 					MapValueType{"", "F", 0, 0, reflect.Map},
-					MapValueType{"E", "a", 1, 1, reflect.Bool},
-					MapValueType{"E", "b", 1, 1, reflect.Invalid},
-					MapValueType{"F", "c", 0, 0, reflect.String},
-					MapValueType{"F", "d", 0, 0, reflect.Invalid},
+					MapValueType{"F", "a", 0, 0, reflect.String},
+					MapValueType{"F", "b", 0, 0, reflect.Invalid},
+					MapValueType{"", "G", 0, 0, reflect.Slice},
+					MapValueType{"", "G", 0, 2, reflect.Slice},
+					MapValueType{"", "G", 1, 2, reflect.String},
 				},
 				false,
 			},
@@ -253,16 +269,19 @@ func TestAppendValueTypesInMap(t *testing.T) {
 			MapValueType{"", "A", 0, 0, reflect.Bool},
 			OutAppendValueTypesInMap{
 				ValueTypesInMap{
+					// MapValueType{"", "A", 0, 0, reflect.Invalid},
 					MapValueType{"", "B", 0, 0, reflect.Float64},
 					MapValueType{"", "C", 0, 0, reflect.String},
 					MapValueType{"", "D", 0, 0, reflect.Bool},
 					MapValueType{"", "E", 0, 0, reflect.Slice},
+					MapValueType{"", "E", 0, 1, reflect.Bool},
 					MapValueType{"", "F", 0, 0, reflect.Map},
-					MapValueType{"E", "a", 1, 1, reflect.Bool},
-					MapValueType{"E", "b", 1, 1, reflect.Invalid},
-					MapValueType{"F", "c", 0, 0, reflect.String},
-					MapValueType{"F", "d", 0, 0, reflect.Invalid},
-					MapValueType{"", "A", 0, 0, reflect.Invalid},
+					MapValueType{"F", "a", 0, 0, reflect.String},
+					MapValueType{"F", "b", 0, 0, reflect.Invalid},
+					MapValueType{"", "G", 0, 0, reflect.Slice},
+					MapValueType{"", "G", 0, 2, reflect.Slice},
+					MapValueType{"", "G", 1, 2, reflect.String},
+					MapValueType{"", "A", 0, 0, reflect.Bool},
 				},
 				true,
 			},
@@ -270,7 +289,7 @@ func TestAppendValueTypesInMap(t *testing.T) {
 	}
 	pass := true
 	for _, x := range toTest {
-		s := samlpeValueTypesInMap
+		s := SamlpeValueTypesInMap
 		ss, added := s.Append(x.In)
 		ok := true
 		if len(ss) == len(x.Outs.Out) {
