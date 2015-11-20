@@ -25,6 +25,14 @@ func (m MapValueType) IsForSameNode(mm MapValueType) bool {
 	return false
 }
 
+// IsInstantUnderSameKey finds out if the given MapValueType is directly under the same key as the receiver.
+func (m MapValueType) IsInstantUnderSameKey(mm MapValueType) bool {
+	if m.ParentKey == mm.ParentKey && m.ClosestKey == mm.ClosestKey {
+		return true
+	}
+	return false
+}
+
 // ValueTypeForPath gets MapValueType for a value.
 func ValueTypeForPath(parentKey string, key string, parentNoOfSliceLevels int, noOfSliceLvs int, v interface{}) MapValueType {
 	return MapValueType{parentKey, key, parentNoOfSliceLevels, noOfSliceLvs, TypeForValue(v)}

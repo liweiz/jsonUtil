@@ -99,6 +99,27 @@ func (v ValueTypesInMap) AllSubchainsForNode(node MapValueType) []ValueTypesInMa
 	return c.Chains
 }
 
+// ChangeParentNoOfSliceLevels deletes existing MapValueType with ParentNoOfSliceLevels and adds new ones with updated MapValueType. It is triggered by different ParentNoOfSliceLevels found. It returns a new ValueTypesInMap.
+func (v ValueTypesInMap) ChangeParentNoOfSliceLevels(m MapValueType) (out ValueTypesInMap, changeNeeded bool) {
+	changeNeeded = true
+	r := ValueTypesInMap{}
+	for _, x := range v {
+
+		if m.IsInstantUnderSameKey(x) {
+			if m.IsForSameNode(x) {
+				r.Append(m)
+			} else {
+				r.Append(MapValueType{x.ParentKey, x.ClosestKey, x.ParentNoOfSliceLevels, x.NoOfSliceLevels, x.Type})
+			}
+		} else {
+			r.Append(x)
+		}
+	}
+	return r
+}
+
+
+
 // AllNodeWithNeighbor returns NodeWithNeighbor for each node in receiver.
 func (v ValueTypesInMap) AllNodeWithNeighbor() []NodeWithNeighbor {
 	n := []NodeWithNeighbor{}
@@ -192,6 +213,7 @@ func (v ValueTypesInMap) Append(m MapValueType) (out ValueTypesInMap, appended b
 			return v, false
 		}
 	}
+	if
 	v = append(v, m)
 	return v, true
 }
